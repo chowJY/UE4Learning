@@ -84,4 +84,11 @@ https://docs.unrealengine.com/4.26/zh-CN/ProgrammingAndScripting/Slate/DetailsCu
 
 #### **四、在standalone内添加菜单栏**
 
-原本认为只要继承了Extensibility的界面就可以拓展和添加菜单和工具。后来发现，其实standaloneWindow即使继承了 Extensibility依然没法扩展menu。后来熟读了AssetEditor 的源码后
+原本认为只要继承了Extensibility的界面就可以拓展和添加菜单和工具。后来发现，其实standaloneWindow即使继承了 Extensibility依然没法扩展menu。后来熟读了AssetEditor 的源码后发现了其中的奥妙。实际上ExtensbilityManager只是一个用于管理众多需要扩展到窗口的extender的中转站。我们所创建的窗口要在构造时会从manager中获取合并好的extender（ExtensbilityManager::getAllExtender()会将该管理器下的所有Extender合并起来。）传入MenuBuilder用于创建菜单栏。通过MenuBuilder.MakeWidget() 来显示菜单。![1626941647622](C:\Users\zhoujingyuan\AppData\Roaming\Typora\typora-user-images\1626941647622.png)
+
+还有第二种做法，使用UToolMenus在插件模块startModule时注册菜单。这里要注意的是每个菜单项都是一个subMenu，对菜单项进行扩展才是添加下拉菜单项。这套方法对从头写菜单栏提供了极大的便利。但对于扩展已知编辑器的菜单和工具栏是有一定困难的（具体方法详见第二大点）。![1626958924093](C:\Users\zhoujingyuan\AppData\Roaming\Typora\typora-user-images\1626958924093.png)
+
+![1626958977666](C:\Users\zhoujingyuan\AppData\Roaming\Typora\typora-user-images\1626958977666.png)
+
+![1626959508195](C:\Users\zhoujingyuan\AppData\Roaming\Typora\typora-user-images\1626959508195.png)
+
